@@ -1,26 +1,468 @@
-@import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-display: "Josefin Sans", sans-serif;
+  --font-script: "Great Vibes", cursive;
+  --font-sans: "DM Sans", sans-serif;
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-campaign-foreground: var(--campaign-foreground);
+  --color-promo-foreground: var(--promo-foreground);
+  --color-announcement: var(--announcement);
+  --color-announcement-foreground: var(--announcement-foreground);
+  --color-promo-background: var(--promo-background);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.25rem;
+
+  --background: oklch(0.975 0.008 85);
+  --foreground: oklch(0.24 0.06 330);
+
+  --card: oklch(0.99 0.004 85);
+  --card-foreground: oklch(0.24 0.06 330);
+
+  --popover: oklch(0.99 0.004 85);
+  --popover-foreground: oklch(0.24 0.06 330);
+
+  --primary: oklch(0.3 0.08 330);
+  --primary-foreground: oklch(0.975 0.008 85);
+
+  --secondary: oklch(0.93 0.02 80);
+  --secondary-foreground: oklch(0.3 0.08 330);
+
+  --muted: oklch(0.94 0.012 80);
+  --muted-foreground: oklch(0.48 0.04 330);
+
+  --accent: oklch(0.72 0.11 70);
+  --accent-foreground: oklch(0.22 0.05 330);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.87 0.02 330);
+  --input: oklch(0.87 0.02 330);
+  --ring: oklch(0.3 0.08 330);
+
+  --campaign-foreground: oklch(1 0 0);
+  --promo-foreground: oklch(0.22 0.03 70);
+  --announcement: oklch(0.5 0.2 27);
+  --announcement-foreground: oklch(1 0 0);
+  --promo-background: oklch(0.91 0.18 98);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility rule-line {
+  border-top: 2px solid var(--color-primary);
+}
+
+/* Storefront typography */
+.storefront h1,
+.storefront h2,
+.storefront h3,
+.store-footer h2,
+.product-detail h1,
+.product-detail h2,
+.product-detail h3 {
+  font-family: var(--font-sans);
+}
+
+/* Product gallery */
+.product-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.product-gallery > div:first-child {
+  order: 2;
+}
+
+.product-thumbnail {
+  width: 66px;
+  height: 76px;
+  flex-shrink: 0;
+}
+
+.product-image-stage {
+  aspect-ratio: 1 / 1.08;
+}
+
+.product-image-detail {
+  transform: scale(1.6);
+}
+
+.product-quantity {
+  appearance: textfield;
+}
+
+.product-quantity::-webkit-inner-spin-button,
+.product-quantity::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.store-footer .footer-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.store-footer .footer-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Campaign layout */
+.campaign-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3.1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.campaign-main,
+.campaign-side {
+  height: min(42vw, 550px);
+  min-height: 390px;
+}
+
+.campaign-copy {
+  width: 43%;
+  padding-left: 8.5%;
+}
+
+.campaign-copy h1 {
+  max-width: 320px;
+}
+
+.campaign-team::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--primary) 65%, transparent);
+}
+
+.campaign-arrow {
+  border: 1px solid
+    color-mix(in oklab, var(--campaign-foreground) 35%, transparent);
+  color: var(--campaign-foreground);
+  background: color-mix(
+    in oklab,
+    var(--campaign-foreground) 12%,
+    transparent
+  );
+  border-radius: 50%;
+}
+
+.campaign-arrow:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.campaign-dot {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--campaign-foreground);
+}
+
+.campaign-dot.is-active {
+  background: var(--campaign-foreground);
+}
+
+/* Outlined headings */
+.outline-heading {
+  color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+  -webkit-text-stroke-color: var(--promo-foreground);
+}
+
+.new-products-panel .outline-heading {
+  -webkit-text-stroke-color: var(--primary-foreground);
+}
+
+/* New products */
+.new-products-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3.1fr);
+  gap: 16px;
+}
+
+.new-products-panel {
+  min-height: 480px;
+}
+
+/* Bestsellers */
+.bestsellers-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3.1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.bestsellers-banner {
+  height: clamp(170px, 20vw, 250px);
+}
+
+.bestsellers-heading {
+  -webkit-text-stroke-color: var(--background);
+}
+
+/* Deals */
+.deals-strip {
+  background: linear-gradient(
+    90deg,
+    var(--promo-background),
+    var(--accent)
+  );
+}
+
+.deals-ribbon {
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    calc(100% - 10px) 100%,
+    0 100%
+  );
+}
+
+.deals-banner {
+  height: clamp(320px, 30vw, 430px);
+}
+
+.deals-countdown {
+  border-color: color-mix(
+    in oklab,
+    var(--primary-foreground) 55%,
+    transparent
+  );
+}
+
+/* Store promises */
+.storefront .store-promise {
+  background-color: var(--primary);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.storefront .store-promise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--primary) 80%, transparent);
+}
+
+.storefront .store-promise-grid > div {
+  padding-inline: 12px;
+}
+
+/* Announcement ticker */
+.announcement-track {
+  animation: storefront-scroll 35s linear infinite;
+}
+
+@keyframes storefront-scroll {
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+/* Desktop and tablet */
+@media (min-width: 1024px) {
+  .product-gallery {
+    grid-template-columns: 66px minmax(0, 1fr);
+    position: sticky;
+    top: 24px;
+  }
+
+  .product-gallery > div:first-child {
+    order: 0;
+  }
+
+  .product-image-stage {
+    aspect-ratio: 1 / 1.25;
+  }
+
+  .storefront .store-promise-grid > div + div {
+    border-left: 1px solid
+      color-mix(in oklab, var(--primary-foreground) 25%, transparent);
+  }
+}
+
+@media (max-width: 1023px) {
+  .campaign-copy {
+    width: 58%;
+  }
+
+  .campaign-copy h1 {
+    font-size: 34px;
+  }
+
+  .new-products-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 639px) {
+  .campaign-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .campaign-main {
+    height: 490px;
+    min-height: 0;
+  }
+
+  .campaign-main > img {
+    object-position: 65% center;
+  }
+
+  .campaign-main::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+
+  .campaign-copy {
+    justify-content: flex-start;
+    width: 85%;
+    padding: 32px 28px;
+  }
+
+  .campaign-copy h1 {
+    font-size: 34px;
+    max-width: 270px;
+  }
+
+  .campaign-copy p {
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .campaign-side {
+    height: 210px;
+    min-height: 0;
+    background: var(--promo-background);
+  }
+
+  .campaign-main > .pointer-events-none {
+    top: auto;
+    bottom: 14px;
+  }
+
+  .campaign-side img {
+    left: auto;
+    right: 0;
+    width: 43%;
+    object-position: center 65%;
+  }
+
+  .campaign-side > div {
+    width: 58%;
+    padding-top: 35px;
+  }
+
+  .new-products-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .new-products-panel {
+    min-height: 230px;
+  }
+
+  .new-products-panel img {
+    width: 50%;
+    height: 100%;
+    right: 0;
+  }
+
+  .new-products-panel > div {
+    width: 50%;
+    padding-top: 45px;
+  }
+
+  .deals-banner {
+    height: 430px;
+  }
+
+  .deals-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, var(--primary) 72%, transparent);
+  }
+
+  .deals-banner > div {
+    max-width: 20rem;
+  }
+
+  .storefront .store-promise {
+    background-attachment: scroll;
+  }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-track {
+    animation: none;
+  }
+
+  .storefront img {
+    transition: none;
+  }
+
+  .storefront .store-promise {
+    background-attachment: scroll;
+  }
 }
