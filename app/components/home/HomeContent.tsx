@@ -12,7 +12,7 @@ import { StoreImage } from "@/app/components/StoreImage";
 import { Button } from "@/app/components/ui/button";
 import type { Banner, HomepageData } from "@/app/lib/homepage";
 import { formatPrice, type Product } from "@/app/lib/products";
-
+import { TestimonialSlider } from "./TestimonialSlider";
 import { Countdown } from "./Countdown";
 import { HeroCarousel } from "./HeroCarousel";
 
@@ -216,7 +216,7 @@ function BannerLink({ banner, children, className }: { banner: Banner; children:
 /* ------------------------------------------------------------------ */
 function BestsellersAndDeals({ data }: { data: HomepageData }) {
   const banner = data.banners.bestsellers_banner;
-  const testimonial = data.testimonials[0];
+  // const testimonial = data.testimonials[0];
 
   return (
     <section
@@ -270,13 +270,16 @@ function BestsellersAndDeals({ data }: { data: HomepageData }) {
           </div>
         )}
 
-        {testimonial && (
+        {/* {testimonial && (
           <figure className="bg-primary p-6 text-primary-foreground">
             <figcaption className="text-[10px] font-semibold uppercase tracking-wide">Testimonials</figcaption>
             <blockquote className="mt-3 text-sm leading-6">“{testimonial.quote}”</blockquote>
             <p className="mt-4 text-xs font-semibold">{testimonial.author}</p>
             {testimonial.role && <p className="text-[11px] opacity-80">{testimonial.role}</p>}
           </figure>
+        )} */}
+        {data.testimonials.length > 0 && (
+          <TestimonialSlider testimonials={data.testimonials} />
         )}
       </aside>
 

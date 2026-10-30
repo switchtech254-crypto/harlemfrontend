@@ -363,16 +363,17 @@
     min-height: 0;
   }
 
-  .campaign-main > img {
-    object-position: 65% center;
-  }
-
-  .campaign-main::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: color-mix(in oklab, var(--primary) 25%, transparent);
-  }
+ /* was: .campaign-main > img */
+.campaign-slide img {
+  object-position: 65% center;
+}
+/* was: .campaign-main::after (inside the max-width: 639px block) */
+.campaign-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--primary) 25%, transparent);
+}
 
   .campaign-copy {
     justify-content: flex-start;
@@ -465,4 +466,7 @@
   .storefront .store-promise {
     background-attachment: scroll;
   }
+  .slide-track {
+  transition-duration: 0ms !important;
+}
 }
