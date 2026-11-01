@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const contactDetails = [
   {
     label: "Phone / WhatsApp",
-    value: "+254 700 000 000",
+    value: "+254 728 766141",
   },
   {
     label: "Email",
