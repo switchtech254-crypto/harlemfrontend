@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import HomeContent from "@/app/components/home/HomeContent";
 import { HomeJsonLd } from "@/app/components/home/HomeJsonLd";
+import { WhatsAppFloat } from "@/app/components/WhatsAppFloat";
 import { getHomepage } from "@/app/lib/data";
 
 const TITLE = "Harlem Store — Sports & Fashion";
@@ -23,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: "Discover jerseys, team kits, footballs, sports shoes, jeans, and sneakers at Harlem Store.",
       type: "website",
       siteName: "Harlem Store",
+      locale: "en_KE",
       ...(images ? { images } : {}),
     },
     twitter: {
@@ -42,6 +44,7 @@ export default async function HomePage() {
     <>
       <HomeJsonLd data={data} />
       <HomeContent data={data} />
+      <WhatsAppFloat number={data.settings.whatsapp_number} />
     </>
   );
 }

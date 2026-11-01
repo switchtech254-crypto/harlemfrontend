@@ -7,12 +7,35 @@ import { getCategories, getProducts } from "@/app/lib/data";
 
 type SearchParams = Promise<{ category?: string | string[]; q?: string | string[] }>;
 
-export const metadata: Metadata = {
-  title: "Shop — Harlem Store",
-  description: "Browse jerseys, uniforms, balls, sports shoes, jeans and sneakers.",
-  openGraph: { title: "Shop — Harlem Store", description: "Browse the full Harlem Store collection.", type: "website" },
-  twitter: { card: "summary_large_image" },
-};
+export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+  const params = await searchParams;
+  const rawCategory = typeof params.category === "string" ? params.category : undefined;
+  const q = typeof params.q === "string" ? params.q.trim().slice(0, 150) : "";
+
+  // Internal search results are thin, near-duplicate pages: keep them out of Google's index.
+  if (q) {
+    return {
+      title: `Search results for “${q}” — Harlem Store`,
+      robots: { index: false, follow: true },
+      alternates: { canonical: "/shop" },
+    };
+  }
+
+  const category = (await getCategories().catch(() => [])).find((c) => c.id === rawCategory);
+  const title = category ? `${category.name} — Harlem Store` : "Shop — Harlem Store";
+  const description = category
+    ? `${category.blurb ? `${category.blurb} ` : ""}Shop ${category.name.toLowerCase()} at Harlem Store.`
+    : "Browse jerseys, uniforms, balls, sports shoes, jeans and sneakers.";
+
+  return {
+    title,
+    description,
+    // Each category page is its own canonical URL; unknown categories fall back to /shop.
+    alternates: { canonical: category ? `/shop?category=${encodeURIComponent(category.id)}` : "/shop" },
+    openGraph: { title, description, type: "website", siteName: "Harlem Store", locale: "en_KE" },
+    twitter: { card: "summary_large_image" },
+  };
+}
 
 function getShopHref(category?: string, q?: string) {
   const params = new URLSearchParams();

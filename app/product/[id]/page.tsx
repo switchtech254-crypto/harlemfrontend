@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getProduct, getRelated } from "@/app/lib/data";
+import { ProductJsonLd } from "@/app/components/ProductJsonLd";
 import { ProductDetails } from "./ProductDetails";
 
 type Params = Promise<{ id: string }>;
@@ -17,10 +18,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: `${product.name} — Harlem Store`,
     description: product.description,
+    alternates: { canonical: `/product/${encodeURIComponent(product.id)}` },
     openGraph: {
       title: `${product.name} — Harlem Store`,
       description: product.description,
       type: "website",
+      siteName: "Harlem Store",
+      locale: "en_KE",
       ...(product.image ? { images: [product.image] } : {}),
     },
     twitter: { card: "summary_large_image" },
@@ -54,5 +58,10 @@ async function ProductContent({ params }: { params: Params }) {
   const product = await getProduct(id);
   if (!product) notFound(); // checked first so unknown ids never hit the "related" endpoint
   const related = await getRelated(id).catch(() => []);
-  return <ProductDetails p={product} related={related} />;
+  return (
+    <>
+      <ProductJsonLd product={product} />
+      <ProductDetails p={product} related={related} />
+    </>
+  );
 }

@@ -12,8 +12,13 @@ export const metadata: Metadata = {
   description:
     "Jerseys, team uniforms, balls, sports shoes, jeans and sneakers.",
   applicationName: "Harlem Store",
+  // Google Search Console "HTML tag" verification: set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token.
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } }
+    : {}),
   openGraph: {
     siteName: "Harlem Store",
+    locale: "en_KE",
     title: "Harlem Store — Sports & Fashion",
     description:
       "Jerseys, team uniforms, balls, sports shoes, jeans and sneakers.",
@@ -30,6 +35,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#431d41", // browser toolbar colour on mobile (your --primary)
 };
 
 export default function RootLayout({

@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/app/components/ui/button";
 // import logo from "@/assets/harlem-logo.jpg.asset.json";
 import type { CategoryInfo } from "@/app/lib/products";
+import type { SocialId, SocialLink } from "@/app/lib/social";
+import { InstagramIcon, TikTokIcon, WhatsAppIcon } from "@/app/components/icons/BrandIcons";
 
 const supportLinks = [
   { label: "Delivery enquiries", href: "/contact" },
@@ -43,7 +45,19 @@ const footerFeatures = [
   },
 ];
 
-export function StoreFooter({ categories }: { categories: CategoryInfo[] }) {
+const SOCIAL_ICONS: Record<SocialId, (props: { className?: string }) => React.JSX.Element> = {
+  tiktok: TikTokIcon,
+  instagram: InstagramIcon,
+  whatsapp: WhatsAppIcon,
+};
+
+export function StoreFooter({
+  categories,
+  social = [],
+}: {
+  categories: CategoryInfo[];
+  social?: SocialLink[];
+}) {
   const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
@@ -145,6 +159,33 @@ export function StoreFooter({ categories }: { categories: CategoryInfo[] }) {
                 </Link>
               </Button>
             </div>
+
+            {social.length > 0 && (
+              <div className="mt-7">
+                <p className="text-sm font-semibold">Follow us</p>
+
+                <ul className="mt-3 flex items-center gap-3">
+                  {social.map(({ id, label, href }) => {
+                    const Icon = SOCIAL_ICONS[id];
+
+                    return (
+                      <li key={id}>
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${label} (opens in a new tab)`}
+                          title={label}
+                          className="grid h-10 w-10 place-items-center border border-primary-foreground/25 text-primary-foreground transition-colors hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                        >
+                          <Icon className="h-5 w-5" />
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
 
           <nav aria-label="Footer shopping categories">
@@ -265,6 +306,19 @@ export function StoreFooter({ categories }: { categories: CategoryInfo[] }) {
                 /
               </span>
               Prices in Kenyan shillings (KSh)
+            </p>
+
+            <p className="mt-2 text-primary-foreground/55">
+              Website by{" "}
+              <a
+                href="https://switchtechnologies.africa"
+                target="_blank"
+                rel="noopener"
+                className="footer-link font-medium text-primary-foreground/80"
+              >
+                Switch Technologies Africa
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
             </p>
           </div>
 

@@ -4,6 +4,7 @@
 // Next.js 16 with `cacheComponents` no longer supports `export const revalidate`.
 // Each fetcher opts in to caching with "use cache"; cacheLife("minutes") means
 // "serve cached for ~5 min, refresh in the background after 1 min".
+import "server-only"; // build error if a client component ever imports this file
 import { cacheLife } from "next/cache";
 
 import { api, ApiError } from "./api";
@@ -47,6 +48,19 @@ export async function getProduct(id: string): Promise<ProductDetail | null> {
     if (e instanceof ApiError && e.status === 404) return null;
     throw e;
   }
+}
+
+/** Every active product (pages through the API). Used by the sitemap. */
+export async function getAllProducts() {
+  "use cache";
+  cacheLife("hours");
+  const all: Product[] = [];
+  for (let page = 1; page <= 50; page++) {
+    const res = await api<Paginated<Product>>(`/products/?page_size=100&page=${page}`);
+    all.push(...res.results);
+    if (!res.next) break;
+  }
+  return all;
 }
 
 export async function getRelated(id: string) {

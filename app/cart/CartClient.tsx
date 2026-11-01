@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Minus, Plus } from "lucide-react";
 
 import { api, errorMessages } from "@/app/lib/api";
+import { MpesaPayment } from "@/app/components/MpesaPayment";
 import { StoreImage } from "@/app/components/StoreImage";
 import { useCart, type CartItem } from "@/app/lib/cart";
 import { formatPrice } from "@/app/lib/products";
@@ -19,7 +20,7 @@ type Quote = {
   valid: boolean;
 };
 
-type PlacedOrder = { reference: string; total: number; status_display: string };
+type PlacedOrder = { reference: string; total: number; status_display: string; payment_status: string };
 
 const sameLine = (l: { id: string; size: string | null }, i: CartItem) => l.id === i.id && (l.size ?? "") === (i.size ?? "");
 
@@ -30,11 +31,17 @@ export function CartClient() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [loading, setLoading] = useState(false);
   const [orderingOpen, setOrderingOpen] = useState(false);
-  const [placed, setPlaced] = useState<PlacedOrder | null>(null);
+  const [mpesaOn, setMpesaOn] = useState(false);
+  const [paid, setPaid] = useState(false);
+  // `phone` is what the customer typed at checkout; M-Pesa needs it to prove the order is theirs.
+  const [placed, setPlaced] = useState<{ order: PlacedOrder; phone: string } | null>(null);
 
   useEffect(() => {
-    api<{ online_ordering_enabled: boolean }>("/settings/")
-      .then((s) => setOrderingOpen(s.online_ordering_enabled))
+    api<{ online_ordering_enabled: boolean; mpesa_enabled?: boolean }>("/settings/")
+      .then((s) => {
+        setOrderingOpen(s.online_ordering_enabled);
+        setMpesaOn(Boolean(s.mpesa_enabled));
+      })
       .catch(() => setOrderingOpen(false));
   }, []);
 
@@ -63,12 +70,19 @@ export function CartClient() {
         <h1 className="text-4xl font-bold uppercase">Order received</h1>
         <div className="rule-line mt-3 w-16" />
         <p className="mt-8 text-lg">
-          Thank you! Your order reference is <strong>{placed.reference}</strong> ({formatPrice(placed.total)}).
+          Thank you! Your order reference is <strong>{placed.order.reference}</strong> ({formatPrice(placed.order.total)}).
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Our team will contact you to confirm availability, delivery and payment. Keep your reference and phone
-          number handy.
+          {paid
+            ? "Your payment is confirmed. Our team will contact you about delivery or collection."
+            : mpesaOn
+              ? "Pay now with M-Pesa below, or skip it and our team will contact you to arrange payment and delivery."
+              : "Our team will contact you to confirm availability, delivery and payment."}{" "}
+          Keep your reference and phone number handy.
         </p>
+        {mpesaOn && placed.order.payment_status !== "paid" && (
+          <MpesaPayment reference={placed.order.reference} orderPhone={placed.phone} amount={placed.order.total} onPaid={() => setPaid(true)} />
+        )}
         <Link href="/shop" className="mt-6 inline-block underline">Continue shopping</Link>
       </section>
     );
@@ -160,7 +174,7 @@ export function CartClient() {
 
           {orderingOpen ? (
             <Checkout items={items} promo={quote?.promo_code ?? ""} disabled={!quote?.valid || loading}
-              onPlaced={(o) => { clear(); setPlaced(o); }} />
+              onPlaced={(o, phone) => { clear(); setPlaced({ order: o, phone }); }} />
           ) : (
             <>
               <p className="mt-6 bg-secondary p-4 text-sm text-muted-foreground">
@@ -179,7 +193,7 @@ export function CartClient() {
 }
 
 function Checkout({ items, promo, disabled, onPlaced }: {
-  items: CartItem[]; promo: string; disabled: boolean; onPlaced: (o: PlacedOrder) => void;
+  items: CartItem[]; promo: string; disabled: boolean; onPlaced: (o: PlacedOrder, phone: string) => void;
 }) {
   const [form, setForm] = useState({ customer_name: "", phone: "", email: "", delivery_method: "delivery", delivery_address: "", notes: "" });
   const [busy, setBusy] = useState(false);
@@ -197,7 +211,7 @@ function Checkout({ items, promo, disabled, onPlaced }: {
         method: "POST",
         body: JSON.stringify({ ...form, items, promo_code: promo }),
       });
-      onPlaced(order);
+      onPlaced(order, form.phone);
     } catch (err) {
       setErrors(errorMessages(err));
     } finally {

@@ -17,6 +17,7 @@ export type SiteSettings = {
   promo_code: string | null;
   promo_description: string | null;
   online_ordering_enabled: boolean;
+  mpesa_enabled: boolean;
 };
 
 export type HeroSlide = {
