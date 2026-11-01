@@ -44,8 +44,8 @@ export default function AboutPage() {
         </div>
 
         <Image
-          src="/images/homepage/sneakers.png"
-          alt="Harlem Store sneakers"
+          src="/images/homepage/WhatsApp Image 2026-10-06 at 11.03.23 AM (1).jpeg"
+          alt="Harlem Store Logo"
           width={800}
           height={800}
           sizes="(max-width: 768px) 100vw, 50vw"
