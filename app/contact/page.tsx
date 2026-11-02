@@ -23,7 +23,7 @@ const contactDetails = [
   },
   {
     label: "Email",
-    value: "hello@harlemstore.co.ke",
+    value: "support@harlemstore.co.ke",
   },
   {
     label: "Visit",

@@ -20,7 +20,7 @@ type Quote = {
   valid: boolean;
 };
 
-type PlacedOrder = { reference: string; total: number; status_display: string; payment_status: string };
+type PlacedOrder = { reference: string; total: number; status_display: string; payment_status: string; tracking_token: string };
 
 const sameLine = (l: { id: string; size: string | null }, i: CartItem) => l.id === i.id && (l.size ?? "") === (i.size ?? "");
 
@@ -79,6 +79,15 @@ export function CartClient() {
               ? "Pay now with M-Pesa below, or skip it and our team will contact you to arrange payment and delivery."
               : "Our team will contact you to confirm availability, delivery and payment."}{" "}
           Keep your reference and phone number handy.
+        </p>
+        <p className="mt-3 text-sm">
+          <Link
+            href={`/track?ref=${encodeURIComponent(placed.order.reference)}&t=${placed.order.tracking_token}`}
+            className="font-semibold underline underline-offset-4"
+          >
+            Track your order
+          </Link>{" "}
+          <span className="text-muted-foreground">: see it move from confirmed to ready.</span>
         </p>
         {mpesaOn && placed.order.payment_status !== "paid" && (
           <MpesaPayment reference={placed.order.reference} orderPhone={placed.phone} amount={placed.order.total} onPaid={() => setPaid(true)} />
@@ -173,7 +182,7 @@ export function CartClient() {
           </div>
 
           {orderingOpen ? (
-            <Checkout items={items} promo={quote?.promo_code ?? ""} disabled={!quote?.valid || loading}
+            <Checkout items={items} promo={quote?.promo_code ?? ""} disabled={!quote?.valid || loading} emailRequired={mpesaOn}
               onPlaced={(o, phone) => { clear(); setPlaced({ order: o, phone }); }} />
           ) : (
             <>
@@ -192,8 +201,8 @@ export function CartClient() {
   );
 }
 
-function Checkout({ items, promo, disabled, onPlaced }: {
-  items: CartItem[]; promo: string; disabled: boolean; onPlaced: (o: PlacedOrder, phone: string) => void;
+function Checkout({ items, promo, disabled, emailRequired, onPlaced }: {
+  items: CartItem[]; promo: string; disabled: boolean; emailRequired: boolean; onPlaced: (o: PlacedOrder, phone: string) => void;
 }) {
   const [form, setForm] = useState({ customer_name: "", phone: "", email: "", delivery_method: "delivery", delivery_address: "", notes: "" });
   const [busy, setBusy] = useState(false);
@@ -230,8 +239,8 @@ function Checkout({ items, promo, disabled, onPlaced }: {
           <input required value={form.phone} onChange={set("phone")} inputMode="tel" autoComplete="tel"
             placeholder="0712 345 678" className={field} />
         </label>
-        <label className="block text-sm">Email (optional)
-          <input type="email" value={form.email} onChange={set("email")} autoComplete="email" className={field} />
+        <label className="block text-sm">{emailRequired ? "Email (we'll send your receipt here)" : "Email (optional)"}
+          <input type="email" required={emailRequired} value={form.email} onChange={set("email")} autoComplete="email" className={field} />
         </label>
       </div>
       <label className="block text-sm">Delivery or collection

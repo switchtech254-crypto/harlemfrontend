@@ -12,6 +12,7 @@ import type { SocialId, SocialLink } from "@/app/lib/social";
 import { InstagramIcon, TikTokIcon, WhatsAppIcon } from "@/app/components/icons/BrandIcons";
 
 const supportLinks = [
+  { label: "Track your order", href: "/track" },
   { label: "Delivery enquiries", href: "/contact" },
   { label: "Sizing & fit advice", href: "/contact" },
   { label: "Returns & exchanges enquiries", href: "/returns-exchanges" },
