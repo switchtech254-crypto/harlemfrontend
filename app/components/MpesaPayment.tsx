@@ -10,6 +10,7 @@ import {
   type MpesaPaymentState,
 } from "@/app/lib/payments";
 import { formatPrice } from "@/app/lib/products";
+import { ChevronRight } from "lucide-react";
 
 type Phase = "idle" | "sending" | "waiting" | "stalled" | "done";
 
@@ -248,7 +249,8 @@ export function MpesaPayment({
               ) : (
                 <>
                   Pay {formatPrice(amount)}
-                  <span aria-hidden="true">→</span>
+                  
+                   <ChevronRight/>
                 </>
               )}
             </button>

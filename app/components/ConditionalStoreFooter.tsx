@@ -1,5 +1,7 @@
+
 "use client";
 
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 
 import { StoreFooter } from "@/app/components/StoreFooter";
@@ -13,12 +15,23 @@ export function ConditionalStoreFooter({
   categories: CategoryInfo[];
   social: SocialLink[];
 }) {
+  return (
+    <Suspense fallback={null}>
+      <FooterContent categories={categories} social={social} />
+    </Suspense>
+  );
+}
+
+function FooterContent({
+  categories,
+  social,
+}: {
+  categories: CategoryInfo[];
+  social: SocialLink[];
+}) {
   const pathname = usePathname();
 
-  // Pages where the footer should not appear.
-  const hiddenFooterPaths = ["/cart"];
-
-  if (hiddenFooterPaths.includes(pathname)) {
+  if (pathname === "/cart") {
     return null;
   }
 
