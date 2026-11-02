@@ -278,17 +278,24 @@ export function ProductDetails({
               )}
 
               {added && (
-                <p className="flex flex-wrap items-center gap-2">
-                  <Check className="size-4" />
-                  Added to your cart.
-                  <Link
-                    href="/cart"
-                    className="underline underline-offset-4"
-                  >
-                    View cart
-                  </Link>
+              <div className="mt-4 space-y-3">
+                <p className="flex items-center gap-2 text-sm font-semibold text-green-700">
+                  <Check className="size-5" />
+                  Successfully added to your cart!
                 </p>
-              )}
+
+                <Button
+                  asChild
+                  className="h-16 w-full rounded-none bg-primary text-lg font-bold uppercase tracking-widest text-primary-foreground shadow-md transition-all hover:bg-accent hover:text-accent-foreground sm:h-20 sm:text-xl"
+                >
+                  <Link href="/cart">
+                    <ShoppingBag className="mr-2 size-6" />
+                    View your cart
+                    <ChevronRight className="ml-2 size-6" />
+                  </Link>
+                </Button>
+              </div>
+            )}
             </div>
 
             <div className="mt-3 divide-y border-y">
