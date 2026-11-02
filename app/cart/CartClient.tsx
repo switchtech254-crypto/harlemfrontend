@@ -37,6 +37,20 @@ export function CartClient() {
   const [placed, setPlaced] = useState<{ order: PlacedOrder; phone: string } | null>(null);
 
   useEffect(() => {
+  // Always start the cart page at the top.
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "instant",
+  });
+
+  // Prevent browser scroll restoration when navigating back.
+  if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+}, []);
+
+  useEffect(() => {
     api<{ online_ordering_enabled: boolean; mpesa_enabled?: boolean }>("/settings/")
       .then((s) => {
         setOrderingOpen(s.online_ordering_enabled);
@@ -80,7 +94,7 @@ export function CartClient() {
               : "Our team will contact you to confirm availability, delivery and payment."}{" "}
           Keep your reference and phone number handy.
         </p>
-        <p className="mt-3 text-sm">
+        {/* <p className="mt-3 text-sm">
           <Link
             href={`/track?ref=${encodeURIComponent(placed.order.reference)}&t=${placed.order.tracking_token}`}
             className="font-semibold underline underline-offset-4"
@@ -88,7 +102,19 @@ export function CartClient() {
             Track your order
           </Link>{" "}
           <span className="text-muted-foreground">: see it move from confirmed to ready.</span>
-        </p>
+        </p> */}
+        <div className="mt-8">
+          <Link
+            href={`/track?ref=${encodeURIComponent(placed.order.reference)}&t=${placed.order.tracking_token}`}
+            className="flex min-h-16 w-full items-center justify-center bg-primary px-6 py-5 text-center font-display text-lg font-bold uppercase tracking-widest text-primary-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground sm:text-xl"
+          >
+            Track your order
+          </Link>
+
+          <p className="mt-3 text-center text-sm text-muted-foreground">
+            Follow your order from confirmation to readiness.
+          </p>
+        </div>
         {mpesaOn && placed.order.payment_status !== "paid" && (
           <MpesaPayment reference={placed.order.reference} orderPhone={placed.phone} amount={placed.order.total} onPaid={() => setPaid(true)} />
         )}
